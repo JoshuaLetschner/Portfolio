@@ -1,0 +1,78 @@
+---
+import legalStatus from '../data/legal-status.json';
+import { profile } from '../data/profile';
+import { formatDate } from '../lib/projects';
+---
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <p class="site-footer__name">{profile.name}</p>
+    <p class="site-footer__meta">
+      Inhaltsstand: <time datetime={profile.contentReviewed}>{formatDate(profile.contentReviewed)}</time>
+    </p>
+    <ul class="site-footer__links" role="list">
+      <li>
+        <a href="/impressum/">Impressum</a>{!legalStatus.impressum.ready && <span class="draft-note"> (Entwurf)</span>}
+      </li>
+      <li>
+        <a href="/datenschutz/">Datenschutz</a>{!legalStatus.datenschutz.ready && <span class="draft-note"> (Entwurf)</span>}
+      </li>
+    </ul>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--color-ink);
+    color: var(--color-on-ink-muted);
+    font-size: var(--text-sm);
+  }
+
+  .site-footer__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 2rem;
+    padding-block: 1.75rem 2.25rem;
+    border-top: 1px solid var(--color-on-ink-line);
+  }
+
+  .site-footer__name {
+    color: var(--color-on-ink);
+    font-weight: 500;
+  }
+
+  .site-footer__meta {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+  }
+
+  .site-footer__links {
+    display: flex;
+    gap: 1.5rem;
+    margin: 0 0 0 auto;
+  }
+
+  .site-footer__links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    color: var(--color-on-ink);
+    text-decoration-color: var(--color-on-ink-line);
+  }
+
+  .site-footer__links a:hover {
+    text-decoration-color: var(--color-accent-on-ink);
+  }
+
+  .site-footer :focus-visible {
+    outline-color: var(--color-accent-on-ink);
+  }
+
+  @media (max-width: 40rem) {
+    .site-footer__links {
+      margin-left: 0;
+      width: 100%;
+    }
+  }
+</style>

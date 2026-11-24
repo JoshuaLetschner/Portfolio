@@ -1,0 +1,62 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+---
+
+<BaseLayout
+  title="Seite nicht gefunden"
+  description="Diese Seite gibt es nicht. Zurück zur Startseite von Joshua Letschner."
+  noindex
+>
+  <section class="container not-found" aria-labelledby="not-found-title">
+    <p class="not-found__code">Fehler 404</p>
+    <h1 id="not-found-title" class="not-found__title">Diese Seite gibt es nicht.</h1>
+    <p class="not-found__text">
+      Vielleicht hat sich die Adresse geändert, oder sie enthält einen Tippfehler. Von der
+      Startseite aus geht es weiter.
+    </p>
+    <div class="not-found__actions">
+      <a class="button" href="/">
+        Zur Startseite
+        <Icon name="arrow-right" />
+      </a>
+      <a class="button button--ghost" href="/#projekte">Zu den Projekten</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found {
+    display: grid;
+    justify-items: start;
+    padding-block: clamp(4rem, 3rem + 6vw, 9rem);
+  }
+
+  .not-found__code {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-accent);
+  }
+
+  .not-found__title {
+    margin-top: 1.25rem;
+    max-width: 14ch;
+    font-size: var(--text-display);
+    line-height: 0.92;
+    letter-spacing: -0.05em;
+  }
+
+  .not-found__text {
+    margin-top: 2rem;
+    max-width: 34rem;
+    color: var(--color-muted);
+    font-size: var(--text-md);
+  }
+
+  .not-found__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2.25rem;
+  }
+</style>

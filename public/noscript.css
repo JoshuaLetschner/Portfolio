@@ -1,0 +1,37 @@
+/* Wird nur ohne JavaScript geladen (<noscript> im Seitenkopf).
+   Navigation bleibt dauerhaft sichtbar, JS-abhängige Bedienelemente verschwinden. */
+
+[data-requires-js],
+[data-menu-button] {
+  display: none !important;
+}
+
+@media (max-width: 47.99rem) {
+  [data-site-header] > div {
+    flex-wrap: wrap;
+    row-gap: 0;
+  }
+
+  [data-site-nav] {
+    position: static !important;
+    display: block !important;
+    width: 100%;
+    border: 0 !important;
+  }
+
+  [data-site-nav] ul {
+    flex-direction: row !important;
+    flex-wrap: wrap;
+    gap: 0 1rem !important;
+    padding: 0 0 0.5rem !important;
+  }
+
+  [data-site-nav] li + li {
+    border-top: 0 !important;
+  }
+
+  [data-site-nav] a {
+    min-height: 2.75rem !important;
+    font-size: 0.9375rem !important;
+  }
+}

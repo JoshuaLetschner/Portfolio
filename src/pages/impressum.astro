@@ -1,0 +1,26 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import legalStatus from '../data/legal-status.json';
+import { profile } from '../data/profile';
+---
+
+<LegalLayout
+  title="Impressum"
+  description="Anbieterangaben für die persönliche Website von Joshua Letschner."
+  ready={legalStatus.impressum.ready}
+>
+  <h2>Anbieter</h2>
+  <p>
+    {profile.name}<br />
+    <span class="todo">Ladungsfähige Anschrift wird vor der Veröffentlichung ergänzt.</span>
+  </p>
+
+  <h2>Kontakt</h2>
+  <p>E-Mail: <a href={`mailto:${profile.email}`}>{profile.email}</a></p>
+
+  <h2>Hinweis</h2>
+  <p>
+    Dies ist eine private, persönliche Website. Sie ist keine Website eines Arbeitgebers und
+    vertritt nicht dessen Positionen.
+  </p>
+</LegalLayout>

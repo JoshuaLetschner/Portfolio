@@ -1,0 +1,110 @@
+---
+import SectionHead from './SectionHead.astro';
+import { timeline } from '../data/profile';
+---
+
+<section class="section experience" id="erfahrung" aria-labelledby="erfahrung-title">
+  <div class="container">
+    <SectionHead number="04" label="Erfahrung" title="Beruflicher Weg" id="erfahrung-title" />
+
+    <ol class="timeline" role="list">
+      {
+        timeline.map((entry) => (
+          <li class:list={['timeline__item', { 'timeline__item--current': entry.current }]}>
+            <p class="timeline__period">
+              <time datetime={entry.start}>{entry.period}</time>
+              {entry.current && <span class="timeline__badge">Aktuell</span>}
+            </p>
+            <div class="timeline__body">
+              <h3 class="timeline__title">{entry.title}</h3>
+              {entry.organization && <p class="timeline__org">{entry.organization}</p>}
+              {entry.description && <p class="timeline__text">{entry.description}</p>}
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .timeline {
+    margin: 0;
+    border-top: 1px solid var(--color-text);
+  }
+
+  .timeline__item {
+    display: grid;
+    gap: 0.6rem;
+    padding-block: 1.6rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .timeline__period {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+  }
+
+  .timeline__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+
+  .timeline__badge::before {
+    content: '';
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    background: var(--color-accent);
+  }
+
+  .timeline__item--current .timeline__period time {
+    color: var(--color-text);
+  }
+
+  .timeline__title {
+    font-size: var(--text-lg);
+    letter-spacing: -0.02em;
+  }
+
+  .timeline__item--current .timeline__title {
+    font-size: var(--text-xl);
+    letter-spacing: -0.03em;
+  }
+
+  .timeline__org {
+    margin-top: 0.3rem;
+    font-weight: 500;
+  }
+
+  .timeline__text {
+    margin-top: 0.6rem;
+    max-width: var(--measure);
+    color: var(--color-muted);
+  }
+
+  @media (min-width: 60rem) {
+    .timeline__item {
+      grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+      gap: 2rem;
+      padding-block: 2rem;
+    }
+
+    .timeline__period {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.4rem;
+      padding-top: 0.3rem;
+    }
+  }
+</style>

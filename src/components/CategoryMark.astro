@@ -1,0 +1,38 @@
+---
+import type { ProjectCategory } from '../lib/projects';
+
+/** Geometrisches Zeichen je Einordnung – unterscheidbar auch ohne Farbe. */
+interface Props {
+  category: ProjectCategory;
+}
+const { category } = Astro.props;
+---
+
+<svg class="category-mark" viewBox="0 0 12 12" aria-hidden="true" focusable="false">
+  {category === 'beruflich' && <rect x="1" y="1" width="10" height="10" class="fill-ink" />}
+  {category === 'privat' && <circle cx="6" cy="6" r="5" class="fill-accent" />}
+  {category === 'konzept' && <rect x="1.75" y="1.75" width="8.5" height="8.5" class="stroke-ink" />}
+  {category === 'experiment' && <path d="M6 1.6 10.6 10.2H1.4Z" class="stroke-ink" />}
+</svg>
+
+<style>
+  .category-mark {
+    width: 0.7rem;
+    height: 0.7rem;
+    flex: none;
+  }
+
+  .fill-ink {
+    fill: var(--color-text);
+  }
+
+  .fill-accent {
+    fill: var(--color-accent);
+  }
+
+  .stroke-ink {
+    fill: none;
+    stroke: var(--color-text);
+    stroke-width: 1.5;
+  }
+</style>

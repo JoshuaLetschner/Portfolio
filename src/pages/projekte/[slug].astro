@@ -1,0 +1,364 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CategoryMark from '../../components/CategoryMark.astro';
+import Icon from '../../components/Icon.astro';
+import ProjectIllustration from '../../components/ProjectIllustration.astro';
+import {
+  categoryLabels,
+  formatDate,
+  getProjects,
+  projectLinks,
+  projectUrl,
+  statusLabels,
+  type Project,
+} from '../../lib/projects';
+
+export const getStaticPaths = (async () => {
+  const projects = await getProjects();
+  return projects.map((project, index) => ({
+    params: { slug: project.data.slug },
+    props: {
+      project,
+      previous: projects[index - 1],
+      next: projects[index + 1],
+    },
+  }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  project: Project;
+  previous?: Project;
+  next?: Project;
+}
+
+const { project, previous, next } = Astro.props;
+const { data } = project;
+const { Content } = await render(project);
+const links = projectLinks(project);
+---
+
+<BaseLayout title={data.title} description={data.summary} ogType="article">
+  <article class="project">
+    <header class="container">
+      <div class="project__head">
+      <a class="back-link" href="/#projekte">
+        <Icon name="arrow-left" />
+        Alle Projekte
+      </a>
+      <p class="project__meta">
+        <span class="project__cat">
+          <CategoryMark category={data.category} />
+          {categoryLabels[data.category]}
+        </span>
+        <span>{statusLabels[data.status]}</span>
+      </p>
+      <h1 class="project__title">{data.title}</h1>
+      <p class="project__lead">{data.summary}</p>
+      </div>
+    </header>
+
+    <div class="container project__grid">
+      <div class="project__main">
+        {
+          data.illustration && (
+            <ProjectIllustration name={data.illustration} caption={data.illustrationCaption} />
+          )
+        }
+        <div class="prose">
+          <Content />
+        </div>
+      </div>
+
+      <aside class="project__aside" aria-labelledby="projekt-fakten">
+        <h2 id="projekt-fakten" class="aside__heading">Auf einen Blick</h2>
+        <dl class="facts-list">
+          <div>
+            <dt>Einordnung</dt>
+            <dd>{data.context}</dd>
+          </div>
+          <div>
+            <dt>Kategorie</dt>
+            <dd>{categoryLabels[data.category]}</dd>
+          </div>
+          <div>
+            <dt>Stand</dt>
+            <dd>{statusLabels[data.status]}</dd>
+          </div>
+          <div>
+            <dt>{data.technologiesLabel}</dt>
+            <dd>
+              <ul class="aside__tech" role="list">
+                {data.technologies.map((tech) => <li>{tech}</li>)}
+              </ul>
+            </dd>
+          </div>
+          {
+            links.length > 0 && (
+              <div>
+                <dt>Links</dt>
+                <dd>
+                  <ul class="aside__links" role="list">
+                    {links.map((link) => (
+                      <li>
+                        <a class="text-link" href={link.href} rel="noopener" target="_blank">
+                          {link.label}
+                          <Icon name="arrow-up-right" />
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </dd>
+              </div>
+            )
+          }
+        </dl>
+        <p class="aside__reviewed">
+          Einordnung geprüft am <time datetime={data.lastReviewed}>{formatDate(data.lastReviewed)}</time>
+        </p>
+      </aside>
+    </div>
+
+    <nav class="container pager" aria-label="Weitere Projekte">
+      {
+        previous ? (
+          <a class="pager__link" href={projectUrl(previous)}>
+            <span class="pager__dir">
+              <Icon name="arrow-left" />
+              Vorheriges
+            </span>
+            <span class="pager__title">{previous.data.title}</span>
+          </a>
+        ) : (
+          <span />
+        )
+      }
+      {
+        next ? (
+          <a class="pager__link pager__link--next" href={projectUrl(next)}>
+            <span class="pager__dir">
+              Nächstes
+              <Icon name="arrow-right" />
+            </span>
+            <span class="pager__title">{next.data.title}</span>
+          </a>
+        ) : (
+          <a class="pager__link pager__link--next" href="/#projekte">
+            <span class="pager__dir">
+              Übersicht
+              <Icon name="arrow-right" />
+            </span>
+            <span class="pager__title">Alle Projekte</span>
+          </a>
+        )
+      }
+    </nav>
+  </article>
+</BaseLayout>
+
+<style>
+  .project__head {
+    display: grid;
+    justify-items: start;
+    padding-block: clamp(2rem, 1.5rem + 2vw, 3rem) clamp(2.5rem, 2rem + 3vw, 4.5rem);
+    border-bottom: 1px solid var(--color-text);
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    text-decoration: none;
+    color: var(--color-muted);
+  }
+
+  .back-link:hover {
+    color: var(--color-accent);
+  }
+
+  .back-link :global(svg) {
+    width: 1.1em;
+    height: 1.1em;
+    transition: transform var(--duration) var(--ease);
+  }
+
+  .back-link:hover :global(svg) {
+    transform: translateX(-3px);
+  }
+
+  .project__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.25rem;
+    margin-top: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .project__cat {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-text);
+  }
+
+  .project__meta > span + span {
+    padding-left: 1.25rem;
+    border-left: 1px solid var(--color-line);
+  }
+
+  .project__title {
+    margin-top: 1.25rem;
+    max-width: 16ch;
+    font-size: clamp(2.6rem, 1.5rem + 4.6vw, 5.5rem);
+    line-height: 0.98;
+    letter-spacing: -0.045em;
+  }
+
+  .project__lead {
+    margin-top: 1.75rem;
+    max-width: 40rem;
+    font-size: var(--text-lg);
+    line-height: 1.45;
+    color: var(--color-muted);
+  }
+
+  .project__grid {
+    display: grid;
+    gap: 3.5rem;
+    padding-bottom: var(--section-space);
+    padding-top: clamp(2.5rem, 2rem + 2vw, 3.5rem);
+  }
+
+  .project__main {
+    display: grid;
+    gap: clamp(2.5rem, 2rem + 2vw, 3.5rem);
+    min-width: 0;
+  }
+
+  .project__aside {
+    align-self: start;
+  }
+
+  .aside__heading {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--color-text);
+  }
+
+  .facts-list > div {
+    padding-block: 1rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .facts-list dt {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .facts-list dd {
+    margin-top: 0.35rem;
+    line-height: 1.5;
+  }
+
+  .aside__tech {
+    margin: 0.25rem 0 0;
+    padding: 0;
+    list-style: none;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+  }
+
+  .aside__tech li + li {
+    margin-top: 0.3rem;
+  }
+
+  .aside__links {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .aside__reviewed {
+    margin-top: 1rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-muted);
+  }
+
+  @media (min-width: 64rem) {
+    .project__grid {
+      grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+      column-gap: clamp(3rem, 6vw, 6rem);
+    }
+
+    .project__aside {
+      position: sticky;
+      top: calc(var(--header-height) + 2rem);
+    }
+  }
+
+  /* Vor/Zurück */
+  .pager {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    padding-bottom: var(--section-space);
+  }
+
+  .pager__link {
+    display: grid;
+    gap: 0.5rem;
+    align-content: start;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--color-text);
+    text-decoration: none;
+  }
+
+  .pager__link--next {
+    text-align: right;
+    justify-items: end;
+  }
+
+  .pager__dir {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .pager__dir :global(svg) {
+    width: 1.2em;
+    height: 1.2em;
+  }
+
+  .pager__title {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .pager__link:hover .pager__title {
+    color: var(--color-accent);
+  }
+</style>

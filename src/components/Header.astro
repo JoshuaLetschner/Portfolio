@@ -1,0 +1,229 @@
+---
+import Icon from './Icon.astro';
+import Monogram from './Monogram.astro';
+import { navigation, profile } from '../data/profile';
+
+const isHome = Astro.url.pathname === '/';
+---
+
+<header class="site-header" data-site-header>
+  <div class="container site-header__inner">
+    <a class="brand" href={isHome ? '#top' : '/'} aria-label={`${profile.name} – zur Startseite`}>
+      <Monogram class="brand__mark" />
+      <span class="brand__name" aria-hidden="true">{profile.name}</span>
+    </a>
+
+    <button
+      class="menu-button"
+      type="button"
+      aria-expanded="false"
+      aria-controls="site-nav"
+      data-menu-button
+    >
+      <span class="menu-button__label" data-menu-label>Menü</span>
+      <Icon name="menu" class="menu-button__icon menu-button__icon--open" />
+      <Icon name="close" class="menu-button__icon menu-button__icon--close" />
+    </button>
+
+    <nav class="site-nav" id="site-nav" aria-label="Hauptnavigation" data-site-nav>
+      <ul role="list">
+        {
+          navigation.map((item, index) => (
+            <li>
+              <a href={item.href}>
+                <span class="site-nav__index" aria-hidden="true">
+                  0{index + 1}
+                </span>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--color-bg);
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    min-height: var(--header-height);
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 2.75rem;
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .brand :global(.brand__mark) {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  .brand__name {
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+
+  .site-nav ul {
+    display: flex;
+    gap: 0.25rem;
+    margin: 0;
+  }
+
+  .site-nav a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 2.75rem;
+    padding-inline: 0.75rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: var(--radius);
+    transition: color var(--duration) var(--ease);
+  }
+
+  .site-nav a:hover {
+    color: var(--color-accent);
+  }
+
+  .site-nav__index {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--color-muted);
+  }
+
+  .menu-button {
+    display: none;
+  }
+
+  /* Mobile Navigation: mit JavaScript als Aufklappmenü.
+     Ohne JavaScript blendet /noscript.css die Links dauerhaft ein. */
+  @media (max-width: 47.99rem) {
+    .menu-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-height: 2.75rem;
+      min-width: 2.75rem;
+      padding: 0.5rem 0.75rem;
+      margin-right: -0.75rem;
+      border: 0;
+      background: transparent;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .menu-button :global(.menu-button__icon) {
+      width: 1.375rem;
+      height: 1.375rem;
+    }
+
+    .menu-button :global(.menu-button__icon--close),
+    .menu-button[aria-expanded='true'] :global(.menu-button__icon--open) {
+      display: none;
+    }
+
+    .menu-button[aria-expanded='true'] :global(.menu-button__icon--close) {
+      display: block;
+    }
+
+    .site-nav {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      display: none;
+      background: var(--color-bg);
+      border-bottom: 1px solid var(--color-text);
+    }
+
+    .site-nav[data-open] {
+      display: block;
+    }
+
+    .site-nav ul {
+      flex-direction: column;
+      gap: 0;
+      padding: 0.5rem var(--gutter) 1.25rem;
+    }
+
+    .site-nav li + li {
+      border-top: 1px solid var(--color-line);
+    }
+
+    .site-nav a {
+      display: flex;
+      gap: 1rem;
+      min-height: 3.25rem;
+      padding-inline: 0;
+      font-size: var(--text-md);
+    }
+  }
+</style>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-site-header]');
+  const button = header?.querySelector<HTMLButtonElement>('[data-menu-button]');
+  const nav = header?.querySelector<HTMLElement>('[data-site-nav]');
+  const label = header?.querySelector<HTMLElement>('[data-menu-label]');
+  const mobileQuery = window.matchMedia('(max-width: 47.99rem)');
+
+  if (header && button && nav) {
+    const setOpen = (open: boolean, { restoreFocus = false } = {}) => {
+      button.setAttribute('aria-expanded', String(open));
+      nav.toggleAttribute('data-open', open);
+      if (label) label.textContent = open ? 'Schließen' : 'Menü';
+      if (!open && restoreFocus) button.focus();
+    };
+
+    button.addEventListener('click', () => {
+      const open = button.getAttribute('aria-expanded') !== 'true';
+      setOpen(open);
+      if (open) nav.querySelector<HTMLAnchorElement>('a')?.focus();
+    });
+
+    // Escape schließt das Menü und gibt den Fokus an den Button zurück.
+    header.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && button.getAttribute('aria-expanded') === 'true') {
+        event.preventDefault();
+        setOpen(false, { restoreFocus: true });
+      }
+    });
+
+    // Auswahl eines Links schließt das Menü (Ankersprung bleibt erhalten).
+    nav.addEventListener('click', (event) => {
+      if ((event.target as HTMLElement).closest('a')) setOpen(false);
+    });
+
+    // Fokus verlässt den Header (z. B. per Tab) → Menü schließen.
+    header.addEventListener('focusout', (event) => {
+      const next = event.relatedTarget as Node | null;
+      if (next && !header.contains(next)) setOpen(false);
+    });
+
+    // Klick außerhalb schließt das Menü.
+    document.addEventListener('click', (event) => {
+      if (!header.contains(event.target as Node)) setOpen(false);
+    });
+
+    // Beim Wechsel auf Desktop-Breite Zustand zurücksetzen.
+    mobileQuery.addEventListener('change', () => setOpen(false));
+  }
+</script>

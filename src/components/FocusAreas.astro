@@ -1,0 +1,148 @@
+---
+import SectionHead from './SectionHead.astro';
+import { focusAreas, focusWeightLabels } from '../data/profile';
+
+const primary = focusAreas.filter((area) => area.weight === 'schwerpunkt');
+const secondary = focusAreas.filter((area) => area.weight !== 'schwerpunkt');
+---
+
+<section class="section focus" id="schwerpunkte" aria-labelledby="schwerpunkte-title">
+  <div class="container">
+    <SectionHead number="03" label="Schwerpunkte" title="Fachliche Schwerpunkte" id="schwerpunkte-title">
+      <p>
+        Drei Themen prägen meine Arbeit. Dazu kommen aktuelle Projektthemen und der Hintergrund aus
+        Ausbildung und IT-Support.
+      </p>
+    </SectionHead>
+
+    <ol class="focus__primary" role="list">
+      {
+        primary.map((area, index) => (
+          <li class="focus-card">
+            <p class="focus-card__label">
+              <span>{String.fromCharCode(65 + index)}</span>
+              {focusWeightLabels[area.weight]}
+            </p>
+            <h3 class="focus-card__title">{area.title}</h3>
+            <p class="focus-card__text">{area.description}</p>
+            <ul class="tech-list" role="list">
+              {area.items.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </li>
+        ))
+      }
+    </ol>
+
+    <dl class="focus__secondary">
+      {
+        secondary.map((area) => (
+          <div class="focus-row">
+            <dt>
+              <span class="focus-row__label">{focusWeightLabels[area.weight]}</span>
+              <span class="focus-row__title">{area.title}</span>
+            </dt>
+            <dd>
+              <p>{area.description}</p>
+              <ul class="tech-list" role="list">
+                {area.items.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</section>
+
+<style>
+  .focus__primary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+    gap: 2.5rem clamp(1.5rem, 3vw, 3rem);
+    margin: 0;
+  }
+
+  .focus-card {
+    display: grid;
+    align-content: start;
+    gap: 0.9rem;
+    padding-top: 1.25rem;
+    border-top: 3px solid var(--color-text);
+  }
+
+  .focus-card__label {
+    display: flex;
+    gap: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .focus-card__label span {
+    color: var(--color-accent);
+  }
+
+  .focus-card__title {
+    font-size: var(--text-xl);
+    letter-spacing: -0.03em;
+  }
+
+  .focus-card__text {
+    color: var(--color-muted);
+  }
+
+  .focus__secondary {
+    margin-top: clamp(3.5rem, 2.5rem + 4vw, 5.5rem);
+    border-top: 1px solid var(--color-text);
+  }
+
+  .focus-row {
+    display: grid;
+    gap: 0.75rem;
+    padding-block: 1.5rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .focus-row dt {
+    display: grid;
+    align-content: start;
+    gap: 0.3rem;
+  }
+
+  .focus-row__label {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .focus-row__title {
+    font-size: var(--text-md);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+
+  .focus-row dd {
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .focus-row dd p {
+    color: var(--color-muted);
+    max-width: var(--measure);
+  }
+
+  @media (min-width: 60rem) {
+    .focus-row {
+      grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+      gap: 2rem;
+    }
+  }
+</style>

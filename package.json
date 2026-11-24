@@ -1,0 +1,32 @@
+{
+  "name": "joshua-letschner-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Persönliche Website von Joshua Letschner – statischer Astro-Build für Cloudflare Workers Static Assets",
+  "engines": {
+    "node": ">=24.11.0 <25"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "check": "astro check",
+    "build": "astro build",
+    "preview": "astro preview",
+    "preview:cloudflare": "astro build && wrangler dev --local",
+    "deploy": "astro build && wrangler deploy",
+    "test:smoke": "node --test tests/smoke.test.mjs"
+  },
+  "dependencies": {
+    "astro": "^7.4.13"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "@astrojs/sitemap": "^3.7.6",
+    "typescript": "^6.0.3",
+    "wrangler": "^4.168.0"
+  },
+  "allowScripts": {
+    "esbuild": false,
+    "workerd": false
+  }
+}

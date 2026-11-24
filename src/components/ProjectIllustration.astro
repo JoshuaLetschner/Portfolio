@@ -1,0 +1,422 @@
+---
+/**
+ * Abstrakte, bewusst vereinfachte Schemata zu den Projekten.
+ * Keine Screenshots, keine realen Umgebungen, keine echten Adressen.
+ */
+import type { Project } from '../lib/projects';
+
+interface Props {
+  name: NonNullable<Project['data']['illustration']>;
+  caption?: string;
+  /** Eindeutiger Präfix für IDs, falls mehrere Grafiken auf einer Seite stehen. */
+  idPrefix?: string;
+}
+
+const { name, caption, idPrefix = name } = Astro.props;
+const titleId = `${idPrefix}-title`;
+
+const titles: Record<Props['name'], string> = {
+  'api-flow':
+    'Schema: Ein Client ruft per mTLS mit Client-Zertifikat API Management auf. API Management holt per Client-Credentials-Flow ein Token von Entra ID und ruft damit das Backend auf. Zertifikate und Geheimnisse liegen im Key Vault.',
+  'quiz-grid':
+    'Konzeptdarstellung: ein Fragenraster mit fünf Kategorien und Punktwerten von 100 bis 400 sowie eine Punkteleiste für drei Teams.',
+  'hub-spoke':
+    'Konzeptschema: Ein zentraler Hub mit Firewall, Application Gateway und API Management ist mit drei getrennten Workload-Spokes verbunden.',
+  'data-platform':
+    'Schema: Gemeinsame und dedizierte Oracle-Datenbanken werden über eine Integrationsschicht an Microsoft Fabric angebunden. Darunter die Bewertungskriterien Lastprofil, Betriebsmodell, Isolation und Skalierung.',
+  'load-balancer':
+    'Lab-Schema: Ein Client sendet Anfragen an einen Cloudflare Load Balancer, der sie auf zwei App Services mit Nginx verteilt. Die Antwort zeigt, welches Backend geantwortet hat.',
+  'iac-pipeline':
+    'Schema: Terraform-Module werden über eine Azure-DevOps-Pipeline getrennt in eine Test- und eine Produktionsumgebung ausgerollt; Azure Monitor und Log Analytics begleiten den Betrieb.',
+};
+---
+
+<figure class="illustration">
+  <div class="illustration__canvas">
+    <svg viewBox="0 0 480 340" role="img" aria-labelledby={titleId} focusable="false">
+      <title id={titleId}>{titles[name]}</title>
+
+      {
+        name === 'api-flow' && (
+          <g>
+            {/* Identität oben */}
+            <rect class="box" x="186" y="22" width="108" height="42" />
+            <text class="t-label" x="240" y="48" text-anchor="middle">Entra ID</text>
+            <path class="line dash" d="M240 64v46" />
+            <text class="t-meta" x="250" y="91">Client Credentials</text>
+
+            {/* Client */}
+            <rect class="box" x="16" y="134" width="84" height="56" />
+            <text class="t-label" x="58" y="167" text-anchor="middle">Client</text>
+
+            {/* mTLS-Strecke */}
+            <path class="line accent" d="M100 162h78" />
+            <path class="accent-fill" d="m178 157 8 5-8 5z" />
+            <text class="t-meta accent-text" x="106" y="150">mTLS</text>
+            <text class="t-meta" x="106" y="184">Zertifikat</text>
+
+            {/* API Management */}
+            <rect class="box box--strong" x="186" y="110" width="108" height="104" />
+            <text class="t-label" x="240" y="152" text-anchor="middle">API</text>
+            <text class="t-label" x="240" y="170" text-anchor="middle">Management</text>
+            <path class="line" d="M204 190h72" />
+            <rect class="accent-fill" x="236" y="186" width="8" height="8" />
+
+            {/* Token zum Backend */}
+            <path class="line" d="M294 162h70" />
+            <path class="ink-fill" d="m364 157 8 5-8 5z" />
+            <text class="t-meta" x="300" y="150">OAuth 2.0</text>
+            <text class="t-meta" x="300" y="184">Token</text>
+
+            {/* Backend */}
+            <rect class="box" x="372" y="134" width="92" height="56" />
+            <text class="t-label" x="418" y="160" text-anchor="middle">Backend</text>
+            <text class="t-meta" x="418" y="177" text-anchor="middle">App Service</text>
+
+            {/* Key Vault unten */}
+            <path class="line dash" d="M240 214v40" />
+            <rect class="box" x="186" y="254" width="108" height="40" />
+            <text class="t-label" x="240" y="279" text-anchor="middle">Key Vault</text>
+            <text class="t-meta" x="250" y="238">Zertifikate, Secrets</text>
+
+            {/* Automatisierung */}
+            <path class="line faint" d="M16 310h448" />
+            <text class="t-meta" x="16" y="332">Konfiguration über Terraform und Deployment-Abläufe</text>
+          </g>
+        )
+      }
+
+      {
+        name === 'quiz-grid' && (
+          <g>
+            {[0, 1, 2, 3, 4].map((col) => (
+              <g>
+                <rect class="ink-fill" x={24 + col * 88} y="24" width="80" height="34" />
+                <path class="line on-ink" d={`M${36 + col * 88} 41h${28 + ((col * 13) % 24)}`} />
+                {[0, 1, 2, 3].map((row) => {
+                  const played = (col + row * 2) % 5 === 1 || (col === 3 && row === 0);
+                  const active = col === 2 && row === 2;
+                  return (
+                    <g>
+                      <rect
+                        class={active ? 'accent-fill' : played ? 'box box--wash' : 'box'}
+                        x={24 + col * 88}
+                        y={66 + row * 50}
+                        width="80"
+                        height="42"
+                      />
+                      <text
+                        class={active ? 't-value on-accent' : played ? 't-value faint-text' : 't-value'}
+                        x={64 + col * 88}
+                        y={92 + row * 50}
+                        text-anchor="middle"
+                      >
+                        {(row + 1) * 100}
+                      </text>
+                    </g>
+                  );
+                })}
+              </g>
+            ))}
+            {['Team 1', 'Team 2', 'Team 3'].map((team, index) => (
+              <g>
+                <text class="t-meta" x={24 + index * 148} y="292">
+                  {team}
+                </text>
+                <path class="line faint" d={`M${24 + index * 148} 308h128`} />
+                <path class={index === 1 ? 'line accent thick' : 'line thick'} d={`M${24 + index * 148} 308h${[56, 96, 40][index]}`} />
+              </g>
+            ))}
+          </g>
+        )
+      }
+
+      {
+        name === 'hub-spoke' && (
+          <g>
+            {/* Eingang */}
+            <text class="t-meta" x="240" y="26" text-anchor="middle">Eingehender Verkehr</text>
+            <path class="line accent" d="M240 36v38" />
+            <path class="accent-fill" d="m235 74 5 8 5-8z" />
+
+            {/* Spokes */}
+            <path class="line" d="M190 170 96 254M290 170l94 84M240 210v52" />
+            <path class="line tick" d="m135 206 10 12M335 218l10-12M232 236h16" />
+
+            {/* Hub */}
+            <circle class="box box--strong" cx="240" cy="150" r="68" />
+            <text class="t-label" x="240" y="133" text-anchor="middle">Hub</text>
+            <text class="t-meta" x="240" y="155" text-anchor="middle">Firewall</text>
+            <text class="t-meta" x="240" y="170" text-anchor="middle">App Gateway</text>
+            <text class="t-meta" x="240" y="185" text-anchor="middle">API Management</text>
+
+            {[
+              { x: 20, label: 'Workload A' },
+              { x: 186, label: 'Workload B' },
+              { x: 352, label: 'Workload C' },
+            ].map((spoke) => (
+              <g>
+                <rect class="box" x={spoke.x} y={spoke.x === 186 ? 262 : 254} width="108" height="50" />
+                <text class="t-label" x={spoke.x + 54} y={spoke.x === 186 ? 292 : 284} text-anchor="middle">
+                  {spoke.label}
+                </text>
+              </g>
+            ))}
+            <text class="t-meta" x="20" y="330">Spoke = getrennter Workload</text>
+          </g>
+        )
+      }
+
+      {
+        name === 'data-platform' && (
+          <g>
+            {/* Quellen */}
+            {[60, 150].map((y, index) => (
+              <g>
+                <path class="box" d={`M24 ${y + 8}v44a44 9 0 0 0 88 0v-44`} />
+                <ellipse class="box" cx="68" cy={y + 8} rx="44" ry="9" />
+                <text class="t-meta" x="68" y={y + 40} text-anchor="middle">
+                  {index === 0 ? 'gemeinsam' : 'dediziert'}
+                </text>
+              </g>
+            ))}
+            <text class="t-meta" x="24" y="40">Oracle ADB</text>
+
+            {/* Integration */}
+            <path class="line" d="M112 90h52M112 180h52M164 90v90M164 135h32" />
+            <rect class="box box--strong" x="196" y="104" width="100" height="62" />
+            <text class="t-label" x="246" y="132" text-anchor="middle">Daten-</text>
+            <text class="t-label" x="246" y="150" text-anchor="middle">integration</text>
+            <text class="t-meta" x="196" y="40">Integration</text>
+
+            {/* Analyse */}
+            <path class="line accent" d="M296 135h50" />
+            <path class="accent-fill" d="m346 130 8 5-8 5z" />
+            <rect class="box" x="356" y="84" width="104" height="102" />
+            <text class="t-label" x="408" y="114" text-anchor="middle">Fabric</text>
+            <text class="t-meta" x="368" y="150">Kapazität</text>
+            {[0, 1, 2, 3, 4, 5].map((i) => (
+              <rect class={i < 3 ? 'ink-fill' : 'box'} x={368 + i * 13} y="160" width="9" height="12" />
+            ))}
+            <text class="t-meta" x="356" y="40">Analyse</text>
+
+            {/* Kriterien */}
+            <path class="line faint" d="M24 240h436" />
+            <text class="t-meta" x="24" y="266">Neben Compute und Speicher:</text>
+            {['Lastprofil', 'Betriebsmodell', 'Isolation', 'Skalierung'].map((label, index) => (
+              <g>
+                <rect
+                  class={index === 2 ? 'accent-fill' : 'ink-fill'}
+                  x={24 + (index % 2) * 216}
+                  y={286 + Math.floor(index / 2) * 26}
+                  width="7"
+                  height="7"
+                />
+                <text class="t-label" x={40 + (index % 2) * 216} y={294 + Math.floor(index / 2) * 26}>
+                  {label}
+                </text>
+              </g>
+            ))}
+          </g>
+        )
+      }
+
+      {
+        name === 'load-balancer' && (
+          <g>
+            {/* Client */}
+            <circle class="box" cx="52" cy="170" r="30" />
+            <text class="t-meta" x="52" y="174" text-anchor="middle">Client</text>
+            <path class="line" d="M82 170h58" />
+            <path class="ink-fill" d="m140 165 8 5-8 5z" />
+
+            {/* Load Balancer */}
+            <rect class="box box--strong" x="150" y="128" width="110" height="84" />
+            <text class="t-label" x="205" y="160" text-anchor="middle">Cloudflare</text>
+            <text class="t-label" x="205" y="178" text-anchor="middle">Load Balancer</text>
+            <rect class="accent-fill" x="200" y="192" width="10" height="4" />
+
+            {/* Verteilung */}
+            <path class="line accent" d="M260 156h34V82h22" />
+            <path class="line dash" d="M260 184h34v74h22" />
+
+            {[
+              { y: 52, label: 'Backend A', active: true },
+              { y: 228, label: 'Backend B', active: false },
+            ].map((origin) => (
+              <g>
+                <rect class={origin.active ? 'box box--strong' : 'box'} x="316" y={origin.y} width="152" height="60" />
+                <text class="t-label" x="328" y={origin.y + 26}>
+                  {origin.label}
+                </text>
+                <text class="t-meta" x="328" y={origin.y + 45}>
+                  App Service · Nginx
+                </text>
+              </g>
+            ))}
+
+            {/* Antwort */}
+            <rect class="box box--wash" x="24" y="262" width="214" height="42" />
+            <text class="t-meta" x="38" y="288">Antwort von:</text>
+            <text class="t-label accent-text" x="132" y="288">Backend A</text>
+          </g>
+        )
+      }
+
+      {
+        name === 'iac-pipeline' && (
+          <g>
+            {/* Module */}
+            <rect class="box" x="32" y="104" width="104" height="70" />
+            <rect class="box" x="26" y="112" width="104" height="70" />
+            <rect class="box box--strong" x="20" y="120" width="104" height="70" />
+            <text class="t-label" x="72" y="150" text-anchor="middle">Terraform</text>
+            <text class="t-meta" x="72" y="170" text-anchor="middle">Module</text>
+
+            {/* Pipeline */}
+            <path class="line" d="M136 155h176" />
+            {[
+              { x: 160, label: 'Plan' },
+              { x: 222, label: 'Prüfen' },
+              { x: 288, label: 'Ausrollen' },
+            ].map((step, index) => (
+              <g>
+                <rect class={index === 2 ? 'accent-fill' : 'ink-fill'} x={step.x - 5} y="150" width="10" height="10" />
+                <text class="t-meta" x={step.x} y="182" text-anchor="middle">
+                  {step.label}
+                </text>
+              </g>
+            ))}
+            <text class="t-meta" x="160" y="128">Azure DevOps</text>
+
+            {/* Umgebungen */}
+            <path class="line" d="M312 155h20V92h16M332 155v63h16" />
+            <rect class="box" x="348" y="64" width="116" height="56" />
+            <text class="t-label" x="364" y="97">Test</text>
+            <path class="line dash faint" d="M348 155h116" />
+            <rect class="box box--strong" x="348" y="190" width="116" height="56" />
+            <text class="t-label" x="364" y="223">Produktion</text>
+
+            {/* Monitoring */}
+            <path class="line dash" d="M406 246v34" />
+            <rect class="box box--wash" x="236" y="280" width="228" height="40" />
+            <text class="t-meta" x="250" y="304">Azure Monitor · Log Analytics</text>
+          </g>
+        )
+      }
+    </svg>
+  </div>
+  {caption && <figcaption class="illustration__caption">{caption}</figcaption>}
+</figure>
+
+<style>
+  .illustration__canvas {
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    padding: clamp(1rem, 0.5rem + 2vw, 2rem);
+  }
+
+  .illustration svg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .illustration__caption {
+    margin-top: 0.65rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-muted);
+  }
+
+  .box {
+    fill: var(--color-surface);
+    stroke: var(--color-text);
+    stroke-width: 1;
+  }
+
+  .box--strong {
+    stroke-width: 1.75;
+  }
+
+  .box--wash {
+    fill: var(--color-wash);
+    stroke: var(--color-line);
+  }
+
+  .line {
+    fill: none;
+    stroke: var(--color-text);
+    stroke-width: 1.25;
+  }
+
+  .line.accent {
+    stroke: var(--color-accent);
+    stroke-width: 1.75;
+  }
+
+  .line.dash {
+    stroke-dasharray: 4 4;
+  }
+
+  .line.faint {
+    stroke: var(--color-line);
+  }
+
+  .line.thick {
+    stroke-width: 5;
+  }
+
+  .line.tick {
+    stroke: var(--color-accent);
+    stroke-width: 1.5;
+  }
+
+  .line.on-ink {
+    stroke: var(--color-on-ink-muted);
+    stroke-width: 2;
+  }
+
+  .ink-fill {
+    fill: var(--color-text);
+  }
+
+  .accent-fill {
+    fill: var(--color-accent);
+  }
+
+  text {
+    font-family: var(--font-mono);
+  }
+
+  .t-label {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 600;
+    fill: var(--color-text);
+    letter-spacing: -0.01em;
+  }
+
+  .t-meta {
+    font-size: 11.5px;
+    fill: var(--color-muted);
+  }
+
+  .t-value {
+    font-size: 15px;
+    font-weight: 500;
+    fill: var(--color-text);
+  }
+
+  .faint-text {
+    fill: var(--color-line-strong);
+  }
+
+  .on-accent {
+    fill: var(--color-surface);
+  }
+
+  .accent-text {
+    fill: var(--color-accent);
+  }
+</style>

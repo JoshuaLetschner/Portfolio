@@ -1,0 +1,292 @@
+---
+import { Picture } from 'astro:assets';
+import portrait from '../assets/joshua-letschner.jpg';
+import Icon from './Icon.astro';
+import Monogram from './Monogram.astro';
+import { hero, profile } from '../data/profile';
+
+const [firstName, ...lastNames] = profile.name.split(' ');
+
+const facts = [
+  { label: 'Aktuell', value: `${profile.role} bei ${profile.employer}` },
+  { label: 'Schwerpunkt', value: 'Microsoft Azure' },
+  { label: 'Ausbildung', value: profile.education },
+  {
+    label: 'Sprachen',
+    value: profile.languages.map((l) => `${l.name} (${l.level})`).join(', '),
+  },
+];
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="container hero__grid">
+    <div class="hero__text">
+      <p class="eyebrow">{hero.eyebrow}</p>
+      <h1 id="hero-title" class="hero__title">
+        <span class="hero__first">{firstName}</span>
+        <span class="hero__last">{lastNames.join(' ')}<span class="hero__dot">.</span></span>
+      </h1>
+      <p class="hero__statement">
+        {hero.statement.map((line) => <span>{line}</span>)}
+      </p>
+      <p class="hero__intro">{hero.intro}</p>
+      <div class="hero__actions">
+        <a class="button" href="#projekte">
+          Projekte ansehen
+          <Icon name="arrow-right" />
+        </a>
+        <a class="button button--ghost" href="#kontakt">Kontakt aufnehmen</a>
+      </div>
+    </div>
+
+    <figure class="portrait">
+      <div class="portrait__frame">
+        <span class="portrait__line portrait__line--v" aria-hidden="true"></span>
+        <span class="portrait__line portrait__line--h" aria-hidden="true"></span>
+        <Picture
+          src={portrait}
+          alt="Joshua Letschner mit Kopfhörern auf einem Sitz im Flugzeug"
+          widths={[360, 540, 720, 960]}
+          sizes="(min-width: 64rem) 30rem, (min-width: 40rem) 60vw, 85vw"
+          formats={['webp']}
+          width={960}
+          fallbackFormat="jpg"
+          quality={70}
+          priority
+          class="portrait__img"
+        />
+        <span class="portrait__mark" aria-hidden="true"><Monogram /></span>
+      </div>
+      <figcaption class="portrait__caption">
+        <span>Abb. 01</span>
+        <span>Unterwegs</span>
+      </figcaption>
+    </figure>
+  </div>
+
+  <div class="container">
+    <dl class="facts">
+      {
+        facts.map((fact) => (
+          <div class="facts__item">
+            <dt>{fact.label}</dt>
+            <dd>{fact.value}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-block: clamp(3rem, 2rem + 5vw, 6.5rem) 0;
+  }
+
+  .hero__grid {
+    display: grid;
+    gap: clamp(3.5rem, 2rem + 6vw, 5rem);
+    align-items: start;
+  }
+
+  .hero__text {
+    display: grid;
+    justify-items: start;
+    gap: 0;
+  }
+
+  .hero__title {
+    margin-top: 1.75rem;
+    font-size: var(--text-display);
+    font-weight: 620;
+    line-height: 0.9;
+    letter-spacing: -0.055em;
+  }
+
+  .hero__title > span {
+    display: block;
+  }
+
+  .hero__last {
+    margin-left: -0.04em;
+  }
+
+  .hero__dot {
+    color: var(--color-accent);
+  }
+
+  .hero__statement {
+    margin-top: clamp(1.75rem, 1.25rem + 2vw, 2.75rem);
+    font-size: var(--text-xl);
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+  }
+
+  .hero__statement span {
+    display: block;
+  }
+
+  .hero__statement span:last-child {
+    color: var(--color-accent);
+  }
+
+  .hero__intro {
+    margin-top: 1.5rem;
+    max-width: 34rem;
+    color: var(--color-muted);
+    font-size: var(--text-md);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2.25rem;
+  }
+
+  /* Porträt mit Linienkomposition */
+  .portrait {
+    position: relative;
+    width: min(100% - 1.5rem, 26rem);
+    justify-self: center;
+    margin-inline: auto;
+  }
+
+  .portrait__frame {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .portrait__frame::before {
+    content: '';
+    position: absolute;
+    inset: 1.25rem -1.25rem -1.25rem 1.25rem;
+    border: 1px solid var(--color-accent);
+    z-index: -1;
+  }
+
+  .portrait :global(.portrait__img) {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: 2px;
+    background: var(--color-wash);
+  }
+
+  .portrait__line {
+    position: absolute;
+    background: var(--color-text);
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .portrait__line--v {
+    top: -2rem;
+    left: 22%;
+    width: 1px;
+    height: 3rem;
+  }
+
+  .portrait__line--h {
+    top: 64%;
+    right: -1.25rem;
+    width: 2.5rem;
+    height: 1px;
+  }
+
+  .portrait__mark {
+    position: absolute;
+    left: -1rem;
+    bottom: 2rem;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 4.25rem;
+    height: 4.25rem;
+    background: var(--color-bg);
+    border: 1px solid var(--color-text);
+    color: var(--color-text);
+  }
+
+  .portrait__mark :global(.monogram) {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  .portrait__caption {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--color-line);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.04em;
+    color: var(--color-muted);
+  }
+
+  /* Faktenleiste */
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+    margin-top: clamp(4rem, 3rem + 4vw, 6.5rem);
+    border-top: 1px solid var(--color-text);
+  }
+
+  .facts__item {
+    padding: 1.1rem 1.5rem 1.25rem 0;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .facts dt {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .facts dd {
+    margin-top: 0.35rem;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  @media (min-width: 64rem) {
+    .hero__grid {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      column-gap: clamp(3rem, 6vw, 6rem);
+    }
+
+    .portrait__line--h {
+      right: -2.25rem;
+      width: 3.5rem;
+    }
+
+    .portrait {
+      width: min(100%, 26rem);
+      margin-top: 3.5rem;
+      justify-self: end;
+      margin-inline: 0;
+    }
+
+    .facts__item + .facts__item {
+      padding-left: 1.5rem;
+      border-left: 1px solid var(--color-line);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .portrait__frame::before {
+      animation: frame-in 700ms var(--ease) 120ms both;
+    }
+
+    @keyframes frame-in {
+      from {
+        transform: translate(-0.75rem, -0.75rem);
+        opacity: 0;
+      }
+    }
+  }
+</style>

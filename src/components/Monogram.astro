@@ -1,0 +1,48 @@
+---
+/**
+ * „JL“-Monogramm als Linienkomposition: J und L als Striche auf einer feinen
+ * gemeinsamen Grundlinie, dazu ein kleiner Akzentpunkt.
+ */
+interface Props {
+  class?: string;
+  title?: string;
+}
+const { class: className, title } = Astro.props;
+---
+
+<svg
+  class:list={['monogram', className]}
+  viewBox="0 0 48 48"
+  fill="none"
+  role={title ? 'img' : undefined}
+  aria-hidden={title ? undefined : 'true'}
+  aria-label={title}
+  focusable="false"
+>
+  <path class="monogram__stroke" d="M8 9.5h13M17.5 9.5v19.5a8 8 0 0 1-8 8H7.5" />
+  <path class="monogram__stroke" d="M28.5 9.5v28h12" />
+  <path class="monogram__link" d="M7.5 43h33" />
+  <rect class="monogram__node" x="37.5" y="8" width="4" height="4" />
+</svg>
+
+<style>
+  .monogram {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .monogram__stroke {
+    stroke: currentColor;
+    stroke-width: 3.25;
+    stroke-linecap: square;
+  }
+
+  .monogram__link {
+    stroke: var(--color-accent);
+    stroke-width: 1.5;
+  }
+
+  .monogram__node {
+    fill: var(--color-accent);
+  }
+</style>

@@ -1,0 +1,12 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  // Muss mit dem Worker-Namen in Cloudflare übereinstimmen.
+  "name": "joshua-letschner-portfolio",
+  "compatibility_date": "2026-11-24",
+  // Reiner Static-Assets-Worker: kein "main", kein ASSETS-Binding, kein nodejs_compat.
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash"
+  }
+}

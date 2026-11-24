@@ -1,0 +1,78 @@
+<!doctype html>
+<!--
+  Quelle der Social-Preview-Grafik (public/og/joshua-letschner.png, 1200 × 630).
+  Neu erzeugen: Datei im Browser öffnen, Viewport 1200 × 630, Screenshot speichern
+  (siehe README, Abschnitt „Social-Preview neu erzeugen“).
+-->
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      @font-face {
+        font-family: 'Geist';
+        font-weight: 100 900;
+        src: url('../../public/fonts/geist-latin-wght-normal.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Geist Mono';
+        font-weight: 100 900;
+        src: url('../../public/fonts/geist-mono-latin-wght-normal.woff2') format('woff2');
+      }
+      * { box-sizing: border-box; margin: 0; }
+      html, body { width: 1200px; height: 630px; }
+      body {
+        position: relative;
+        overflow: hidden;
+        background: #f5f2eb;
+        color: #20211e;
+        font-family: 'Geist', sans-serif;
+        padding: 72px 80px;
+      }
+      .eyebrow {
+        display: flex; align-items: center; gap: 14px;
+        font: 500 17px/1 'Geist Mono', monospace;
+        letter-spacing: 0.08em; text-transform: uppercase; color: #5b5c55;
+      }
+      .eyebrow::before { content: ''; width: 13px; height: 13px; background: #a83d2e; }
+      h1 {
+        margin-top: 44px;
+        font-size: 138px; font-weight: 620; line-height: 0.9; letter-spacing: -0.055em;
+      }
+      h1 > span { display: block; }
+      .dot { color: #a83d2e; }
+      .statement {
+        margin-top: 44px; font-size: 30px; font-weight: 500; letter-spacing: -0.02em; line-height: 1.25;
+      }
+      .statement em { font-style: normal; color: #a83d2e; }
+      .mark {
+        position: absolute; right: 96px; top: 150px;
+        width: 260px; height: 260px;
+        display: grid; place-items: center;
+        border: 1.5px solid #20211e; background: #f5f2eb;
+      }
+      .mark::before {
+        content: ''; position: absolute; inset: 24px -24px -24px 24px;
+        border: 1.5px solid #a83d2e; z-index: -1;
+      }
+      .mark svg { width: 170px; height: 170px; }
+      .line-v { position: absolute; right: 290px; top: 96px; width: 1.5px; height: 70px; background: #20211e; }
+      .line-h { position: absolute; right: 52px; top: 330px; width: 70px; height: 1.5px; background: #20211e; }
+      .rule { position: absolute; left: 80px; right: 80px; bottom: 56px; border-top: 1.5px solid #20211e; }
+    </style>
+  </head>
+  <body>
+    <p class="eyebrow">Cloud Engineer · Region Karlsruhe</p>
+    <h1><span>Joshua</span><span>Letschner<span class="dot">.</span></span></h1>
+    <p class="statement">Cloud-Infrastruktur verstehen. Automatisieren. <em>Weiterdenken.</em></p>
+    <div class="mark">
+      <svg viewBox="0 0 48 48" fill="none" stroke-linecap="square" aria-hidden="true">
+        <path d="M8 9.5h13M17.5 9.5v19.5a8 8 0 0 1-8 8H7.5M28.5 9.5v28h12" stroke="#20211e" stroke-width="3.25" />
+        <path d="M7.5 43h33" stroke="#a83d2e" stroke-width="1.5" />
+        <rect x="37.5" y="8" width="4" height="4" fill="#a83d2e" />
+      </svg>
+    </div>
+    <span class="line-v"></span>
+    <span class="line-h"></span>
+    <div class="rule"></div>
+  </body>
+</html>

@@ -1,0 +1,35 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import legalStatus from '../data/legal-status.json';
+import { profile } from '../data/profile';
+---
+
+<LegalLayout
+  title="Datenschutz"
+  description="Informationen zur Datenverarbeitung auf der persönlichen Website von Joshua Letschner."
+  ready={legalStatus.datenschutz.ready}
+>
+  <p>
+    <span class="todo">Der vollständige Datenschutztext wird vor der Veröffentlichung ergänzt und geprüft.</span>
+    Die folgenden Punkte beschreiben den technischen Aufbau dieser Website als Grundlage dafür.
+  </p>
+
+  <h2>Verantwortlich</h2>
+  <p>
+    {profile.name}, E-Mail: <a href={`mailto:${profile.email}`}>{profile.email}</a><br />
+    <span class="todo">Anschrift wird ergänzt.</span>
+  </p>
+
+  <h2>Technischer Aufbau</h2>
+  <ul>
+    <li>Die Website besteht aus statischen Seiten und wird über Cloudflare ausgeliefert.</li>
+    <li>Es werden keine Cookies gesetzt und keine Analyse- oder Tracking-Dienste eingebunden.</li>
+    <li>Schriften, Bilder und Skripte werden vom eigenen Server geladen; es gibt keine externen Einbettungen.</li>
+    <li>Es gibt kein Kontaktformular. Wer eine E-Mail schreibt, nutzt dafür das eigene E-Mail-Programm.</li>
+  </ul>
+
+  <h2>Hosting</h2>
+  <p>
+    <span class="todo">Angaben zum Hosting-Anbieter, zu Server-Logs und zur Rechtsgrundlage werden ergänzt.</span>
+  </p>
+</LegalLayout>
